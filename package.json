@@ -6,7 +6,11 @@
   "author": "Nathan Knowler <nathan@knowler.me>",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-react": "^7.0.0",
     "autoprefixer": "^8.6.4",
+    "babel-loader": "^8.0.4",
     "browser-sync": "^2.24.5",
     "browser-sync-webpack-plugin": "^2.2.2",
     "bs-html-injector": "^3.0.3",
@@ -40,5 +44,9 @@
   "scripts": {
     "build": "webpack --progress --env.production",
     "start": "webpack-serve --no-clipboard"
+  },
+  "dependencies": {
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3"
   }
 }

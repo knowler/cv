@@ -29,6 +29,11 @@ let webpackConfig = {
   module: {
     rules: [
       {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
+      },
+      {
         test: /\.scss$/,
         use: [
           isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
@@ -43,6 +48,9 @@ let webpackConfig = {
         ]
       }
     ]
+  },
+  resolve: {
+    extensions: ['*', '.js', '.jsx']
   },
   plugins: [
     new CleanWebpackPlugin('public', { verbose: false }),
@@ -71,7 +79,7 @@ if (isProduction) {
       extractors: [
         {
           extractor: TailwindExtractor,
-          extensions: ["html", "js", "php", "vue"]
+          extensions: ['html', 'js', 'php', 'vue']
         }
       ]
     }),
