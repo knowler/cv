@@ -65,10 +65,12 @@ main * + * {
   margin-bottom: 0.5rem;
 }
 
-details h3 {
-  @apply text-base;
+details {
+  h3, p {
+    @apply text-base;
 
-  margin-left: 1rem;
+    margin-left: 1rem;
+  }
 }
 
 summary {
