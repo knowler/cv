@@ -1,8 +1,8 @@
 {
-  "name": "@knowler/resume",
+  "name": "@knowler/cv",
   "private": true,
   "version": "2.0.0",
-  "repository": "git@github.com:knowler/resume.git",
+  "repository": "git@github.com:knowler/cv.git",
   "author": "Nathan Knowler <nathan@knowler.me>",
   "license": "MIT",
   "scripts": {
