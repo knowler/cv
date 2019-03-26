@@ -1,30 +1,18 @@
 const path = require('path');
-const glob = require('glob-all');
-const { argv } = require('yargs');
 
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const PurgecssWebpackPlugin = require('purgecss-webpack-plugin');
-const BrowserSyncWebpackPlugin = require('browser-sync-webpack-plugin');
-const UglifyJsWebpackPlugin = require('uglifyjs-webpack-plugin');
 
-const isProduction = !!(argv.env && argv.env.production);
-
-let webpackConfig = {
-  mode: isProduction ? 'production' : 'development',
-  context: path.resolve(__dirname, 'resources'),
-  stats: isProduction ? true : false,
+module.exports = (env, argv) => ({
+  mode: argv ? argv.mode : 'development',
+  context: path.resolve(__dirname, 'src'),
   entry: {
-    'main': [
-      './scripts/main.js',
-      './styles/main.scss'
-    ]
+    'index': './index.js',
   },
   output: {
-    path: path.resolve(__dirname, 'public'),
-    filename: `scripts/[name]${isProduction ? '_[hash]' : ''}.js`,
-    chunkFilename: `scripts/[id]${isProduction ? '_[hash]' : ''}.js`,
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].js',
+    chunkFilename: '[id].js',
   },
   module: {
     rules: [
@@ -34,67 +22,25 @@ let webpackConfig = {
         use: ['babel-loader'],
       },
       {
-        test: /\.scss$/,
-        use: [
-          isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
-          'css-loader',
-          'postcss-loader',
-          {
-            loader: 'sass-loader', options: {
-              implementation: require('sass'),
-              fiber: require('fibers')
-            }
-          }
-        ]
+        test: /\.mdx$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', '@mdx-js/loader']
       }
-    ]
+    ],
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx']
+    extensions: ['*', '.js', '.jsx'],
+    alias: {
+      '@components': path.resolve(__dirname, 'src/components'),
+      '@content': path.resolve(__dirname, 'src/content'),
+      '@theme': path.resolve(__dirname, 'src/theme'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
+    },
   },
   plugins: [
-    new CleanWebpackPlugin('public', { verbose: false }),
-    new MiniCssExtractPlugin({
-      filename: `styles/[name]${isProduction ? '_[hash]' : ''}.css`,
-      chunkFilename: `styles/[id]${isProduction ? '_[hash]' : ''}.css`
-    }),
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: './index.html'
-    })
-  ]
-};
-
-class TailwindExtractor {
-  static extract(content) {
-    return content.match(/[A-Za-z0-9-_:\/]+/g) || [];
-  }
-}
-
-if (isProduction) {
-  webpackConfig.plugins.push(
-    new PurgecssWebpackPlugin({
-      paths: glob.sync([
-        path.join(__dirname, 'resources/**/*.html')
-      ]),
-      extractors: [
-        {
-          extractor: TailwindExtractor,
-          extensions: ['html', 'js', 'php', 'vue']
-        }
-      ]
+      template: './index.html',
     }),
-    new UglifyJsWebpackPlugin()
-  );
-} else {
-  webpackConfig.plugins.push(
-    new BrowserSyncWebpackPlugin(
-      {
-        proxy: 'http://localhost:8080',
-        plugins: ['bs-html-injector'],
-        files: ['public/**/*.html']
-      }
-    )
-  )
-}
-
-module.exports = webpackConfig;
+  ],
+});
